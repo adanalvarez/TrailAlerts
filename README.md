@@ -88,10 +88,6 @@ The CloudTrail Analyzer Lambda (`SigmaCloudTrailAnalyzer`) is triggered by S3 ev
 3. For each event in the log file, checks if it matches any Sigma rule
 4. When matches are found, formats the alert data and sends it to SQS
 
-The analyzer uses an efficient, two-stage approach:
-- First pass: Fast filtering of events by eventSource and eventName
-- Second pass: Detailed rule evaluation with full pattern matching
-
 The Lambda implements a caching system that limits S3 list operations to at most once every 5 minutes, optimizing performance and reducing API call costs when frequently invoked.
 
 ### Event Processor Lambda
