@@ -16,7 +16,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 
@@ -28,24 +28,22 @@ terraform {
   #}
 }
 
-data "aws_caller_identity" "current" {}
+module "trailalerts" {
+  source  = "adanalvarez/trailalerts/aws"
+  version = "0.2.1"
 
-# Only load the existing CloudTrail bucket data if create_cloudtrail = false
-data "aws_s3_bucket" "existing_cloudtrail_logs" {
-  count  = var.create_cloudtrail ? 0 : 1
-  bucket = var.existing_cloudtrail_bucket_name
-}
-
-############################
-# LOCALS
-############################
-locals {
-  # Make sure these paths exist on your local system
-  layer_zip_path    = "../lambdas/layer/layer.zip"
-  layer_name        = "trailalerts-detection-layer"
-  requirements_path = "../lambdas/layer/requirements.txt"
-
-  # If create_cloudtrail = true, use the new bucket, else the existing
-  cloudtrail_bucket_id  = var.create_cloudtrail ? aws_s3_bucket.cloudtrail_logs[0].id : data.aws_s3_bucket.existing_cloudtrail_logs[0].id
-  cloudtrail_bucket_arn = var.create_cloudtrail ? aws_s3_bucket.cloudtrail_logs[0].arn : data.aws_s3_bucket.existing_cloudtrail_logs[0].arn
+  aws_region                      = var.aws_region
+  environment                     = var.environment
+  email_endpoint                  = var.email_endpoint
+  create_cloudtrail               = var.create_cloudtrail
+  existing_cloudtrail_bucket_name = var.existing_cloudtrail_bucket_name
+  enable_sns                      = var.enable_sns
+  ses_identities                  = var.ses_identities
+  source_email                    = var.source_email
+  vpnapi_key                      = var.vpnapi_key
+  correlation_enabled             = var.correlation_enabled
+  cloudwatch_logs_retention_days  = var.cloudwatch_logs_retention_days
+  notification_cooldown_minutes   = var.notification_cooldown_minutes
+  min_notification_severity       = var.min_notification_severity
+  project                         = var.project
 }
