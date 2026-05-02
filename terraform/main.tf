@@ -30,7 +30,7 @@ terraform {
 
 module "trailalerts" {
   source  = "adanalvarez/trailalerts/aws"
-  version = "0.2.8"
+  version = "0.3.0"
 
   aws_region                      = var.aws_region
   environment                     = var.environment
